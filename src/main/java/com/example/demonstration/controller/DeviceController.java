@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -25,8 +26,8 @@ public class DeviceController {
 
     //get one device
     @GetMapping("/{id}")
-    public String getDevice() {
-        return "hello";
+    public DeviceDTO getDevice(@PathVariable("id") String id) {
+        return deviceService.getDevice(id);
     }
 
     //create a device
@@ -45,9 +46,13 @@ public class DeviceController {
         }
     }
 
-    // Delete a device
     @DeleteMapping("/{id}")
-    public String deleteDevice() {
-        return "hello";
+    public ResponseEntity<DeviceDTO> deleteDevice(@PathVariable String id) {
+        Optional<DeviceDTO> deletedDevice = deviceService.deleteDevice(id);
+        if (deletedDevice.isPresent()) {
+            return ResponseEntity.ok(deletedDevice.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
