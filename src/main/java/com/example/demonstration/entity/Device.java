@@ -10,17 +10,15 @@ import javax.persistence.Entity;
 
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection="device")
 public class Device {
 
-    @javax.persistence.Id
+    @Id
     private String deviceId;
-    @Setter
     private String deviceName;
-    @Setter
     private String deviceType;
-    @Setter
     private Boolean status;
 }

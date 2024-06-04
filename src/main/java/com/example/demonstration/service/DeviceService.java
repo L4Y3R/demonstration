@@ -6,12 +6,11 @@ import com.example.demonstration.repository.DeviceRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,5 +28,18 @@ public class DeviceService {
     public List<DeviceDTO> getAllDevices(){
         List<Device> devices = deviceRepo.findAll();
         return modelMapper.map(devices, new TypeToken<List<DeviceDTO>>(){}.getType());
+    }
+
+    public DeviceDTO updateDevice(String id, DeviceDTO deviceDTO) {
+        Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
+        if (existingDeviceOptional.isPresent()) {
+            Device device = existingDeviceOptional.get();
+            modelMapper.map(deviceDTO, device);
+            device.setDeviceId(id);
+            deviceRepo.save(device);
+            return deviceDTO;
+        } else {
+            return null;
+        }
     }
 }

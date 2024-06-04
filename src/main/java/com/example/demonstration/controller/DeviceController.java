@@ -3,7 +3,6 @@ package com.example.demonstration.controller;
 import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,10 +35,14 @@ public class DeviceController {
         return deviceService.createDevice(deviceDTO);
     }
 
-    // Update a device
     @PutMapping("/{id}")
-    public String updateDevice() {
-        return "hello";
+    public ResponseEntity<DeviceDTO> updateDevice(@PathVariable String id, @RequestBody DeviceDTO deviceDTO) {
+        DeviceDTO updatedDevice = deviceService.updateDevice(id, deviceDTO);
+        if (updatedDevice != null) {
+            return ResponseEntity.ok(updatedDevice);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // Delete a device
