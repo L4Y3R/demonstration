@@ -1,9 +1,9 @@
 package com.example.demonstration.service;
 
-
-import com.example.demonstration.dto.DeviceDTO;
+import com.example.demonstration.dto.DeviceGroupDTO;
 import com.example.demonstration.entity.Device;
-import com.example.demonstration.repository.DeviceRepo;
+import com.example.demonstration.entity.DeviceGroup;
+import com.example.demonstration.repository.DeviceGroupRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class DeviceGroupService {
         if (existingDeviceGroupOptional.isPresent()) {
             DeviceGroup deviceGroup = existingDeviceGroupOptional.get();
             modelMapper.map(deviceGroupDTO, deviceGroup);
-            deviceGroup.setDeviceGroupId(id);
+            deviceGroup.setGroupId(id);
             deviceGroupRepo.save(deviceGroup);
             return deviceGroupDTO;
         } else {
@@ -58,8 +58,7 @@ public class DeviceGroupService {
         if (existingDeviceGroupOptional.isPresent()) {
             deviceGroupRepo.deleteById(id);
             DeviceGroupDTO deletedDeviceGroupDTO = new DeviceGroupDTO();
-            deletedDeviceGroupDTO.setDeviceGroupName(existingDeviceGroupOptional.get().getDeviceGroupName());
-            deletedDeviceGroupDTO.setDeviceGroupType(existingDeviceGroupOptional.get().getDeviceGroupType());
+            deletedDeviceGroupDTO.setGroupName(existingDeviceGroupOptional.get().getGroupName());
             return Optional.of(deletedDeviceGroupDTO);
         } else {
             return Optional.empty();
