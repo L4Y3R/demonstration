@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/vi/users")
+@RequestMapping("api/v1/users")
 @CrossOrigin
 public class UserContoller {
 

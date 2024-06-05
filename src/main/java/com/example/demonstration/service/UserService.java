@@ -1,7 +1,9 @@
 package com.example.demonstration.service;
 
 
+import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.dto.UserDTO;
+import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.User;
 import com.example.demonstration.repository.UserRepo;
 import org.modelmapper.ModelMapper;
@@ -40,15 +42,14 @@ public class UserService {
         return userDTO;
     }
 
-    public UserDTO updateUser(String id, UserDTO userDTO){
+    public UserDTO updateUser(String id, UserDTO userDTO) {
         Optional<User> existingUserOptional = userRepo.findById(id);
-        if(existingUserOptional.isPresent()){
+        if (existingUserOptional.isPresent()) {
             User user = existingUserOptional.get();
             modelMapper.map(userDTO, user);
-            user.setUserId(id);
             userRepo.save(user);
             return userDTO;
-        }else {
+        } else {
             return null;
         }
     }

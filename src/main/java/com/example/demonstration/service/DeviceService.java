@@ -42,11 +42,12 @@ public class DeviceService {
     public DeviceDTO updateDevice(String id, DeviceDTO deviceDTO) {
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
         if (existingDeviceOptional.isPresent()) {
-            Device device = existingDeviceOptional.get();
-            modelMapper.map(deviceDTO, device);
-            device.setDeviceId(id);
-            deviceRepo.save(device);
-            return deviceDTO;
+            Device existingDevice = existingDeviceOptional.get();
+            existingDevice.setDeviceName(deviceDTO.getDeviceName());
+            existingDevice.setDeviceType(deviceDTO.getDeviceType());
+            existingDevice.setStatus(deviceDTO.getStatus());
+            deviceRepo.save(existingDevice);
+            return modelMapper.map(existingDevice, DeviceDTO.class);
         } else {
             return null;
         }

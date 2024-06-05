@@ -1,7 +1,7 @@
 package com.example.demonstration.service;
 
+import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.dto.DeviceGroupDTO;
-import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.DeviceGroup;
 import com.example.demonstration.repository.DeviceGroupRepo;
 import org.modelmapper.ModelMapper;
@@ -43,16 +43,15 @@ public class DeviceGroupService {
     public DeviceGroupDTO updateDeviceGroup(String id, DeviceGroupDTO deviceGroupDTO) {
         Optional<DeviceGroup> existingDeviceGroupOptional = deviceGroupRepo.findById(id);
         if (existingDeviceGroupOptional.isPresent()) {
-            DeviceGroup deviceGroup = existingDeviceGroupOptional.get();
-            modelMapper.map(deviceGroupDTO, deviceGroup);
-            deviceGroup.setGroupId(id);
-            deviceGroupRepo.save(deviceGroup);
-            return deviceGroupDTO;
+            DeviceGroup existingDeviceGroup = existingDeviceGroupOptional.get();
+            existingDeviceGroup.setGroupName(deviceGroupDTO.getGroupName());
+            existingDeviceGroup.setOwnerName(deviceGroupDTO.getOwnerName());
+            deviceGroupRepo.save(existingDeviceGroup);
+            return modelMapper.map(existingDeviceGroup, DeviceGroupDTO.class);
         } else {
             return null;
         }
     }
-
     public Optional<DeviceGroupDTO> deleteDeviceGroup(String id) {
         Optional<DeviceGroup> existingDeviceGroupOptional = deviceGroupRepo.findById(id);
         if (existingDeviceGroupOptional.isPresent()) {
