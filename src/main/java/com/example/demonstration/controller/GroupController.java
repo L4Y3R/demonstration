@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/groups")
+@RequestMapping("api/v1/groups")
 @CrossOrigin
 public class GroupController {
     @Autowired
