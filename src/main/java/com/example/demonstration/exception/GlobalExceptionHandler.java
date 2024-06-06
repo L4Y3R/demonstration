@@ -22,5 +22,10 @@ public class GlobalExceptionHandler {
         public ResponseEntity<Object> exception(GroupNotFoundException exception) {
             return new ResponseEntity<>("This device group does not exist", HttpStatus.NOT_FOUND);
         }
+
+        @ExceptionHandler(GroupExistsException.class)
+        public ResponseEntity<Object> exception(GroupExistsException exception) {
+            return new ResponseEntity<>("This device group already exists", HttpStatus.CONFLICT);
+        }
 }
 

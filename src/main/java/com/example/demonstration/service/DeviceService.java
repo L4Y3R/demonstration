@@ -2,7 +2,9 @@ package com.example.demonstration.service;
 
 import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.entity.Device;
+import com.example.demonstration.entity.DeviceGroup;
 import com.example.demonstration.exception.DeviceNotFoundException;
+import com.example.demonstration.repository.DeviceGroupRepo;
 import com.example.demonstration.repository.DeviceRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -18,6 +20,10 @@ import java.util.Optional;
 public class DeviceService {
     @Autowired
     private DeviceRepo deviceRepo;
+
+    @Autowired
+    private DeviceGroupRepo deviceGroupRepo;
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -32,10 +38,12 @@ public class DeviceService {
         return deviceOptional.map(device -> modelMapper.map(device, DeviceDTO.class)).orElse(null);
     }
 
+    /*
     public DeviceDTO createDevice (DeviceDTO deviceDTO){
         deviceRepo.save(modelMapper.map(deviceDTO, Device.class));
         return deviceDTO;
     }
+     */
 
     public DeviceDTO updateDevice(String id, DeviceDTO deviceDTO) {
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
@@ -55,13 +63,23 @@ public class DeviceService {
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
         if (existingDeviceOptional.isPresent()) {
             deviceRepo.deleteById(id);
-            DeviceDTO deletedDeviceDTO = new DeviceDTO();
-            deletedDeviceDTO.setDeviceName(existingDeviceOptional.get().getDeviceName());
-            deletedDeviceDTO.setDeviceType(existingDeviceOptional.get().getDeviceType());
-            deletedDeviceDTO.setStatus(existingDeviceOptional.get().getStatus());
+            DeviceDTO deletedDeviceDTO = modelMapper.map(existingDeviceOptional.get(), DeviceDTO.class); // Map Device to DeviceDTO using ModelMapper
             return Optional.of(deletedDeviceDTO);
         } else {
             throw new DeviceNotFoundException();
+        }
+    }
+
+    public Device addDeviceToGroup(Device deviceDTO, String groupName) {
+        Optional<DeviceGroup> optionalGroup = deviceGroupRepo.findByGroupName(groupName);
+        if (optionalGroup.isPresent()) {
+            Device device = modelMapper.map(deviceDTO, Device.class); // Map DeviceDTO to Device using ModelMapper
+            Device savedDevice = deviceRepo.save(device);
+            optionalGroup.get().getDevices().add(savedDevice);
+            deviceGroupRepo.save(optionalGroup.get());
+            return savedDevice;
+        } else {
+            return null;
         }
     }
 }

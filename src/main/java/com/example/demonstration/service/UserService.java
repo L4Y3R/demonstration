@@ -57,8 +57,7 @@ public class UserService {
         Optional<User> existingUserOptional = userRepo.findById(id);
         if (existingUserOptional.isPresent()) {
             userRepo.deleteById(id);
-            UserDTO deletedUserDTO = new UserDTO();
-            deletedUserDTO.setUserName(existingUserOptional.get().getUserName());
+            UserDTO deletedUserDTO = modelMapper.map(existingUserOptional.get(), UserDTO.class); // Map User to UserDTO using ModelMapper
             return Optional.of(deletedUserDTO);
         } else {
             throw new UserNotFoundException();
