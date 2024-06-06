@@ -49,10 +49,6 @@ public class DeviceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<DeviceDTO> deleteDevice(@PathVariable String id) {
         Optional<DeviceDTO> deletedDevice = deviceService.deleteDevice(id);
-        if (deletedDevice.isPresent()) {
-            return ResponseEntity.ok(deletedDevice.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return deletedDevice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

@@ -1,8 +1,11 @@
 package com.example.demonstration.service;
 
 
+import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.dto.UserDTO;
+import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.User;
+import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.repository.UserRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,11 +32,8 @@ public class UserService {
 
     public UserDTO getUser(String id){
         Optional<User> userOptional = userRepo.findById(id);
-        if(userOptional.isPresent()){
-            return modelMapper.map(userOptional.get(), UserDTO.class);
-        }else {
-            return null;
-        }
+        if(userOptional.isEmpty()) throw new UserNotFoundException();
+        return userOptional.map(user -> modelMapper.map(user, UserDTO.class)).orElse(null);
     }
 
     public UserDTO createUser(UserDTO userDTO){
@@ -40,16 +41,15 @@ public class UserService {
         return userDTO;
     }
 
-    public UserDTO updateUser(String id, UserDTO userDTO){
+    public UserDTO updateUser(String id, UserDTO userDTO) {
         Optional<User> existingUserOptional = userRepo.findById(id);
-        if(existingUserOptional.isPresent()){
+        if (existingUserOptional.isPresent()) {
             User user = existingUserOptional.get();
             modelMapper.map(userDTO, user);
-            user.setUserId(id);
             userRepo.save(user);
             return userDTO;
-        }else {
-            return null;
+        } else {
+            throw new UserNotFoundException();
         }
     }
 
@@ -61,7 +61,7 @@ public class UserService {
             deletedUserDTO.setUserName(existingUserOptional.get().getUserName());
             return Optional.of(deletedUserDTO);
         } else {
-            return Optional.empty();
+            throw new UserNotFoundException();
         }
     }
 

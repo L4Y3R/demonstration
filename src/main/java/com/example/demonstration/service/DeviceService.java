@@ -2,6 +2,7 @@ package com.example.demonstration.service;
 
 import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.entity.Device;
+import com.example.demonstration.exception.DeviceNotFoundException;
 import com.example.demonstration.repository.DeviceRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -27,11 +28,8 @@ public class DeviceService {
 
     public DeviceDTO getDevice(String id){
         Optional<Device> deviceOptional = deviceRepo.findById(id);
-        if (deviceOptional.isPresent()) {
-            return modelMapper.map(deviceOptional.get(), DeviceDTO.class);
-        } else {
-            return null;
-        }
+        if (deviceOptional.isEmpty()) throw new DeviceNotFoundException();
+        return deviceOptional.map(device -> modelMapper.map(device, DeviceDTO.class)).orElse(null);
     }
 
     public DeviceDTO createDevice (DeviceDTO deviceDTO){
@@ -42,13 +40,14 @@ public class DeviceService {
     public DeviceDTO updateDevice(String id, DeviceDTO deviceDTO) {
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
         if (existingDeviceOptional.isPresent()) {
-            Device device = existingDeviceOptional.get();
-            modelMapper.map(deviceDTO, device);
-            device.setDeviceId(id);
-            deviceRepo.save(device);
-            return deviceDTO;
+            Device existingDevice = existingDeviceOptional.get();
+            existingDevice.setDeviceName(deviceDTO.getDeviceName());
+            existingDevice.setDeviceType(deviceDTO.getDeviceType());
+            existingDevice.setStatus(deviceDTO.getStatus());
+            deviceRepo.save(existingDevice);
+            return modelMapper.map(existingDevice, DeviceDTO.class);
         } else {
-            return null;
+            throw new DeviceNotFoundException();
         }
     }
 
@@ -62,7 +61,7 @@ public class DeviceService {
             deletedDeviceDTO.setStatus(existingDeviceOptional.get().getStatus());
             return Optional.of(deletedDeviceDTO);
         } else {
-            return Optional.empty();
+            throw new DeviceNotFoundException();
         }
     }
 }

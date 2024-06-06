@@ -1,6 +1,7 @@
 package com.example.demonstration.controller;
 
 import com.example.demonstration.dto.DeviceGroupDTO;
+import com.example.demonstration.service.DeviceGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,29 +14,29 @@ import java.util.Optional;
 @CrossOrigin
 public class GroupController {
     @Autowired
-    private GroupService groupService;
+    private DeviceGroupService deviceGroupService;
 
     //get all groups
     @GetMapping
     public List<DeviceGroupDTO> getAllGroups(){
-        return groupService.getAllGroups();
+        return deviceGroupService.getAllDeviceGroups();
     }
 
     //get one group
     @GetMapping("/{id}")
     public DeviceGroupDTO getGroup(@PathVariable("id") String id) {
-        return groupService.getGroup(id);
+        return deviceGroupService. getDeviceGroup(id);
     }
 
     //create a device
     @PostMapping("/new")
     public DeviceGroupDTO createGroup(@RequestBody DeviceGroupDTO groupDTO){
-        return groupService.createGroup(groupDTO);
+        return deviceGroupService.createDeviceGroup(groupDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<DeviceGroupDTO> updateGroup(@PathVariable String id, @RequestBody DeviceGroupDTO groupDTO) {
-        DeviceGroupDTO updatedGroup = groupService.updateGroup(id, groupDTO);
+        DeviceGroupDTO updatedGroup = deviceGroupService.updateDeviceGroup(id, groupDTO);
         if (updatedGroup != null) {
             return ResponseEntity.ok(updatedGroup);
         } else {
@@ -45,11 +46,7 @@ public class GroupController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<DeviceGroupDTO> deleteGroup(@PathVariable String id) {
-        Optional<DeviceGroupDTO> deletedGroup = groupService.deleteGroup(id);
-        if (deletedGroup.isPresent()) {
-            return ResponseEntity.ok(deletedGroup.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Optional<DeviceGroupDTO> deletedGroup = deviceGroupService.deleteDeviceGroup(id);
+        return deletedGroup.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
