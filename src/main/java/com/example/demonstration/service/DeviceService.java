@@ -64,7 +64,7 @@ public class DeviceService {
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
         if (existingDeviceOptional.isPresent()) {
             deviceRepo.deleteById(id);
-            DeviceDTO deletedDeviceDTO = modelMapper.map(existingDeviceOptional.get(), DeviceDTO.class); // Map Device to DeviceDTO using ModelMapper
+            DeviceDTO deletedDeviceDTO = modelMapper.map(existingDeviceOptional.get(), DeviceDTO.class);
             return Optional.of(deletedDeviceDTO);
         } else {
             throw new DeviceNotFoundException();
@@ -74,7 +74,7 @@ public class DeviceService {
     public Device addDeviceToGroup(Device deviceDTO, String groupName) {
         Optional<DeviceGroup> optionalGroup = deviceGroupRepo.findByGroupName(groupName);
         if (optionalGroup.isPresent()) {
-            Device device = modelMapper.map(deviceDTO, Device.class); // Map DeviceDTO to Device using ModelMapper
+            Device device = modelMapper.map(deviceDTO, Device.class);
             Device savedDevice = deviceRepo.save(device);
             optionalGroup.get().getDevices().add(savedDevice);
             deviceGroupRepo.save(optionalGroup.get());
