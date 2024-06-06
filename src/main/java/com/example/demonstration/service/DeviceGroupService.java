@@ -3,6 +3,7 @@ package com.example.demonstration.service;
 import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.dto.DeviceGroupDTO;
 import com.example.demonstration.entity.DeviceGroup;
+import com.example.demonstration.exception.GroupNotFoundException;
 import com.example.demonstration.repository.DeviceGroupRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -28,11 +29,8 @@ public class DeviceGroupService {
 
     public DeviceGroupDTO getDeviceGroup(String id){
         Optional<DeviceGroup> deviceGroupOptional = deviceGroupRepo.findById(id);
-        if (deviceGroupOptional.isPresent()) {
-            return modelMapper.map(deviceGroupOptional.get(), DeviceGroupDTO.class);
-        } else {
-            return null;
-        }
+        if (deviceGroupOptional.isEmpty()) throw new GroupNotFoundException();
+        return deviceGroupOptional.map(deviceGroup -> modelMapper.map(deviceGroup, DeviceGroupDTO.class)).orElse(null);
     }
 
     public DeviceGroupDTO createDeviceGroup (DeviceGroupDTO deviceGroupDTO){
@@ -49,7 +47,7 @@ public class DeviceGroupService {
             deviceGroupRepo.save(existingDeviceGroup);
             return modelMapper.map(existingDeviceGroup, DeviceGroupDTO.class);
         } else {
-            return null;
+            throw new GroupNotFoundException();
         }
     }
     public Optional<DeviceGroupDTO> deleteDeviceGroup(String id) {
@@ -60,7 +58,7 @@ public class DeviceGroupService {
             deletedDeviceGroupDTO.setGroupName(existingDeviceGroupOptional.get().getGroupName());
             return Optional.of(deletedDeviceGroupDTO);
         } else {
-            return Optional.empty();
+            throw new GroupNotFoundException();
         }
     }
 }

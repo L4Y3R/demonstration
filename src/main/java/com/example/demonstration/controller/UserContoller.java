@@ -48,10 +48,6 @@ public class UserContoller {
     @DeleteMapping("/{id}")
     public ResponseEntity<UserDTO> deleteUser(@PathVariable String id) {
         Optional<UserDTO> deletedUser = userService.deleteUser(id);
-        if (deletedUser.isPresent()) {
-            return ResponseEntity.ok(deletedUser.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return deletedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

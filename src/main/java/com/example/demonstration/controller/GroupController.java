@@ -47,10 +47,6 @@ public class GroupController {
     @DeleteMapping("/{id}")
     public ResponseEntity<DeviceGroupDTO> deleteGroup(@PathVariable String id) {
         Optional<DeviceGroupDTO> deletedGroup = deviceGroupService.deleteDeviceGroup(id);
-        if (deletedGroup.isPresent()) {
-            return ResponseEntity.ok(deletedGroup.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return deletedGroup.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
