@@ -1,8 +1,8 @@
 package com.example.demonstration.service;
 
-import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.dto.DeviceGroupDTO;
 import com.example.demonstration.entity.DeviceGroup;
+import com.example.demonstration.exception.GroupExistsException;
 import com.example.demonstration.exception.GroupNotFoundException;
 import com.example.demonstration.repository.DeviceGroupRepo;
 import org.modelmapper.ModelMapper;
@@ -34,8 +34,13 @@ public class DeviceGroupService {
     }
 
     public DeviceGroupDTO createDeviceGroup (DeviceGroupDTO deviceGroupDTO){
-        deviceGroupRepo.save(modelMapper.map(deviceGroupDTO, DeviceGroup.class));
-        return deviceGroupDTO;
+        Optional<DeviceGroup> group = deviceGroupRepo.findByGroupName(deviceGroupDTO.getGroupName());
+        if(group.isEmpty()){
+            deviceGroupRepo.save(modelMapper.map(deviceGroupDTO, DeviceGroup.class));
+            return deviceGroupDTO;
+        }else{
+            throw new GroupExistsException();
+        }
     }
 
     public DeviceGroupDTO updateDeviceGroup(String id, DeviceGroupDTO deviceGroupDTO) {
@@ -54,8 +59,7 @@ public class DeviceGroupService {
         Optional<DeviceGroup> existingDeviceGroupOptional = deviceGroupRepo.findById(id);
         if (existingDeviceGroupOptional.isPresent()) {
             deviceGroupRepo.deleteById(id);
-            DeviceGroupDTO deletedDeviceGroupDTO = new DeviceGroupDTO();
-            deletedDeviceGroupDTO.setGroupName(existingDeviceGroupOptional.get().getGroupName());
+            DeviceGroupDTO deletedDeviceGroupDTO = modelMapper.map(existingDeviceGroupOptional.get(), DeviceGroupDTO.class); // Map DeviceGroup to DeviceGroupDTO using ModelMapper
             return Optional.of(deletedDeviceGroupDTO);
         } else {
             throw new GroupNotFoundException();

@@ -1,8 +1,10 @@
 package com.example.demonstration.controller;
 
 import com.example.demonstration.dto.DeviceDTO;
+import com.example.demonstration.entity.Device;
 import com.example.demonstration.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,11 +32,12 @@ public class DeviceController {
         return deviceService.getDevice(id);
     }
 
-    //create a device
+    /*
     @PostMapping("/new")
     public DeviceDTO createDevice(@RequestBody DeviceDTO deviceDTO){
         return deviceService.createDevice(deviceDTO);
     }
+     */
 
     @PutMapping("/{id}")
     public ResponseEntity<DeviceDTO> updateDevice(@PathVariable String id, @RequestBody DeviceDTO deviceDTO) {
@@ -50,5 +53,15 @@ public class DeviceController {
     public ResponseEntity<DeviceDTO> deleteDevice(@PathVariable String id) {
         Optional<DeviceDTO> deletedDevice = deviceService.deleteDevice(id);
         return deletedDevice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<Device> addDevice(@RequestBody Device device, @RequestParam String groupName) {
+        Device savedDevice = deviceService.addDeviceToGroup(device, groupName);
+        if (savedDevice != null) {
+            return ResponseEntity.ok(savedDevice);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 }
