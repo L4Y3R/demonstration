@@ -4,6 +4,7 @@ import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.DeviceGroup;
 import com.example.demonstration.exception.DeviceNotFoundException;
+import com.example.demonstration.exception.GroupNotFoundException;
 import com.example.demonstration.repository.DeviceGroupRepo;
 import com.example.demonstration.repository.DeviceRepo;
 import org.modelmapper.ModelMapper;
@@ -79,7 +80,7 @@ public class DeviceService {
             deviceGroupRepo.save(optionalGroup.get());
             return savedDevice;
         } else {
-            return null;
+            throw new GroupNotFoundException();
         }
     }
 }
