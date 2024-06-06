@@ -1,10 +1,7 @@
 package com.example.demonstration.service;
 
-import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.dto.DeviceGroupDTO;
-import com.example.demonstration.dto.UserDTO;
 import com.example.demonstration.entity.DeviceGroup;
-import com.example.demonstration.entity.User;
 import com.example.demonstration.exception.GroupExistsException;
 import com.example.demonstration.exception.GroupNotFoundException;
 import com.example.demonstration.repository.DeviceGroupRepo;

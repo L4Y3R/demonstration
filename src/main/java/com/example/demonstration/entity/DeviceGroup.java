@@ -27,6 +27,5 @@ public class DeviceGroup {
     private String groupName;
     private String ownerName;
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "groupId", referencedColumnName = "groupId")
     private List<Device> devices = new ArrayList<>();
 }

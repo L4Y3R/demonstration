@@ -1,9 +1,6 @@
 package com.example.demonstration.service;
 
-
-import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.dto.UserDTO;
-import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.User;
 import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.repository.UserRepo;
@@ -13,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
