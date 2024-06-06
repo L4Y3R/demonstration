@@ -26,6 +26,5 @@ public class DeviceGroup {
     private String groupId;
     private String groupName;
     private String ownerName;
-    @OneToMany(cascade = CascadeType.ALL)
     private List<Device> devices = new ArrayList<>();
 }
