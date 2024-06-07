@@ -2,6 +2,7 @@ package com.example.demonstration.controller;
 
 import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.entity.Device;
+import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,6 +63,17 @@ public class DeviceController {
             return ResponseEntity.ok(savedDevice);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    // Add device to user
+    @PostMapping("/new")
+    public ResponseEntity<Device> addDeviceToUser(@RequestBody Device device, @RequestParam String userName) {
+        try {
+            Device savedDevice = deviceService.addDeviceToUser(device, userName);
+            return ResponseEntity.ok(savedDevice);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 }
