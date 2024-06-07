@@ -48,7 +48,7 @@ public class DeviceGroupService {
         if (existingDeviceGroupOptional.isPresent()) {
             DeviceGroup existingDeviceGroup = existingDeviceGroupOptional.get();
             existingDeviceGroup.setGroupName(deviceGroupDTO.getGroupName());
-            existingDeviceGroup.setOwnerName(deviceGroupDTO.getOwnerName());
+            existingDeviceGroup.setAdmin(deviceGroupDTO.getAdmin());
             deviceGroupRepo.save(existingDeviceGroup);
             return modelMapper.map(existingDeviceGroup, DeviceGroupDTO.class);
         } else {

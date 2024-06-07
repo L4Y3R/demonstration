@@ -71,22 +71,36 @@ public class DeviceService {
         if (existingDeviceOptional.isPresent()) {
             deviceRepo.deleteById(id);
             DeviceDTO deletedDeviceDTO = modelMapper.map(existingDeviceOptional.get(), DeviceDTO.class);
+
+            List<DeviceGroup> groupsToUpdate = deviceGroupRepo.findAll();
+            for (DeviceGroup group : groupsToUpdate) {
+                if (group.getDevices().contains(id)) {
+                    group.getDevices().remove(id);
+                    deviceGroupRepo.save(group);
+                }
+            }
             return Optional.of(deletedDeviceDTO);
         } else {
             throw new DeviceNotFoundException();
         }
     }
 
-    public Device addDeviceToGroup(Device deviceDTO, String groupName) {
+    public Device addDeviceToGroupWithUser(Device device, String groupName, String userName) {
         Optional<DeviceGroup> optionalGroup = deviceGroupRepo.findByGroupName(groupName);
-        if (optionalGroup.isPresent()) {
-            Device device = modelMapper.map(deviceDTO, Device.class);
+        Optional<User> optionalUser = userRepo.findByUserName(userName);
+
+        if (optionalGroup.isPresent() && optionalUser.isPresent()) {
+            User user = optionalUser.get();
             Device savedDevice = deviceRepo.save(device);
-            optionalGroup.get().getDevices().add(savedDevice);
+            savedDevice.setUserId(user.getUserId());
+            deviceRepo.save(savedDevice);
+            optionalGroup.get().getDevices().add(savedDevice.getDeviceId());
             deviceGroupRepo.save(optionalGroup.get());
             return savedDevice;
         } else {
-            throw new GroupNotFoundException();
+            if (optionalUser.isEmpty()) throw new UserNotFoundException();
+            if (optionalGroup.isEmpty()) throw new GroupNotFoundException();
+            return null; // This line will never be reached due to exceptions
         }
     }
 

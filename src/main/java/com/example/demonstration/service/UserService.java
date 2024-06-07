@@ -1,9 +1,12 @@
 package com.example.demonstration.service;
 
 import com.example.demonstration.dto.UserDTO;
+import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.User;
 import com.example.demonstration.exception.UserExistsException;
+import com.example.demonstration.exception.UserHasDevicesException;
 import com.example.demonstration.exception.UserNotFoundException;
+import com.example.demonstration.repository.DeviceRepo;
 import com.example.demonstration.repository.UserRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -19,6 +22,10 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private DeviceRepo deviceRepo;
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -57,14 +64,17 @@ public class UserService {
 
     public Optional<UserDTO> deleteUser(String id) {
         Optional<User> existingUserOptional = userRepo.findById(id);
+
         if (existingUserOptional.isPresent()) {
+            List<Device> userDevices = deviceRepo.findByUserId(id);
+            if (!userDevices.isEmpty()) {
+                throw new UserHasDevicesException();
+            }
             userRepo.deleteById(id);
-            UserDTO deletedUserDTO = modelMapper.map(existingUserOptional.get(), UserDTO.class); // Map User to UserDTO using ModelMapper
+            UserDTO deletedUserDTO = modelMapper.map(existingUserOptional.get(), UserDTO.class);
             return Optional.of(deletedUserDTO);
         } else {
             throw new UserNotFoundException();
         }
     }
-
-
 }

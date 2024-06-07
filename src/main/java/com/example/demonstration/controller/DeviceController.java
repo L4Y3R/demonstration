@@ -57,8 +57,8 @@ public class DeviceController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Device> addDevice(@RequestBody Device device, @RequestParam String groupName) {
-        Device savedDevice = deviceService.addDeviceToGroup(device, groupName);
+    public ResponseEntity<Device> addDevice(@RequestBody Device device, @RequestParam String groupName, @RequestParam String userName) {
+        Device savedDevice = deviceService.addDeviceToGroupWithUser(device, groupName, userName);
         if (savedDevice != null) {
             return ResponseEntity.ok(savedDevice);
         } else {
