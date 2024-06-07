@@ -33,13 +33,7 @@ public class DeviceController {
         return deviceService.getDevice(id);
     }
 
-    /*
-    @PostMapping("/new")
-    public DeviceDTO createDevice(@RequestBody DeviceDTO deviceDTO){
-        return deviceService.createDevice(deviceDTO);
-    }
-     */
-
+    //update a device
     @PutMapping("/{id}")
     public ResponseEntity<DeviceDTO> updateDevice(@PathVariable String id, @RequestBody DeviceDTO deviceDTO) {
         DeviceDTO updatedDevice = deviceService.updateDevice(id, deviceDTO);
@@ -50,12 +44,14 @@ public class DeviceController {
         }
     }
 
+    //delete a device
     @DeleteMapping("/{id}")
     public ResponseEntity<DeviceDTO> deleteDevice(@PathVariable String id) {
         Optional<DeviceDTO> deletedDevice = deviceService.deleteDevice(id);
         return deletedDevice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    //add a device to a group
     @PostMapping("/add")
     public ResponseEntity<Device> addDevice(@RequestBody Device device, @RequestParam String groupName, @RequestParam String userName) {
         Device savedDevice = deviceService.addDeviceToGroupWithUser(device, groupName, userName);
@@ -66,7 +62,7 @@ public class DeviceController {
         }
     }
 
-    // Add device to user
+    //add a device(with a user)
     @PostMapping("/new")
     public ResponseEntity<Device> addDeviceToUser(@RequestBody Device device, @RequestParam String userName) {
         try {

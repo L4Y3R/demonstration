@@ -5,7 +5,6 @@ import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.DeviceGroup;
 import com.example.demonstration.entity.User;
 import com.example.demonstration.exception.DeviceNotFoundException;
-import com.example.demonstration.exception.GroupNotFoundException;
 import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.repository.DeviceGroupRepo;
 import com.example.demonstration.repository.DeviceRepo;
@@ -45,12 +44,6 @@ public class DeviceService {
         return deviceOptional.map(device -> modelMapper.map(device, DeviceDTO.class)).orElse(null);
     }
 
-    /*
-    public DeviceDTO createDevice (DeviceDTO deviceDTO){
-        deviceRepo.save(modelMapper.map(deviceDTO, Device.class));
-        return deviceDTO;
-    }
-     */
 
     public DeviceDTO updateDevice(String id, DeviceDTO deviceDTO) {
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);

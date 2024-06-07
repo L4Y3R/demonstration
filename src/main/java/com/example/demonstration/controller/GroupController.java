@@ -28,12 +28,13 @@ public class GroupController {
         return deviceGroupService. getDeviceGroup(id);
     }
 
-    //create a device
+    //create a group
     @PostMapping("/new")
     public DeviceGroupDTO createGroup(@RequestBody DeviceGroupDTO groupDTO){
         return deviceGroupService.createDeviceGroup(groupDTO);
     }
 
+    //update a group
     @PutMapping("/{id}")
     public ResponseEntity<DeviceGroupDTO> updateGroup(@PathVariable String id, @RequestBody DeviceGroupDTO groupDTO) {
         DeviceGroupDTO updatedGroup = deviceGroupService.updateDeviceGroup(id, groupDTO);
@@ -44,6 +45,7 @@ public class GroupController {
         }
     }
 
+    //delete a group
     @DeleteMapping("/{id}")
     public ResponseEntity<DeviceGroupDTO> deleteGroup(@PathVariable String id) {
         Optional<DeviceGroupDTO> deletedGroup = deviceGroupService.deleteDeviceGroup(id);
