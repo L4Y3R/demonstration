@@ -99,8 +99,7 @@ public class DeviceService {
             return savedDevice;
         } else {
             if (optionalUser.isEmpty()) throw new UserNotFoundException();
-            if (optionalGroup.isEmpty()) throw new GroupNotFoundException();
-            return null; // This line will never be reached due to exceptions
+            return null;
         }
     }
 
