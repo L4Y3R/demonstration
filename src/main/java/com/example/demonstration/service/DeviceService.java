@@ -3,10 +3,13 @@ package com.example.demonstration.service;
 import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.DeviceGroup;
+import com.example.demonstration.entity.User;
 import com.example.demonstration.exception.DeviceNotFoundException;
 import com.example.demonstration.exception.GroupNotFoundException;
+import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.repository.DeviceGroupRepo;
 import com.example.demonstration.repository.DeviceRepo;
+import com.example.demonstration.repository.UserRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,9 @@ public class DeviceService {
 
     @Autowired
     private DeviceGroupRepo deviceGroupRepo;
+
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -81,6 +87,16 @@ public class DeviceService {
             return savedDevice;
         } else {
             throw new GroupNotFoundException();
+        }
+    }
+
+    public Device addDeviceToUser(Device device, String userName) {
+        Optional<User> optionalUser = userRepo.findByUserName(userName);
+        if (optionalUser.isPresent()) {
+            device.setUserId(optionalUser.get().getUserId());
+            return deviceRepo.save(device);
+        } else {
+            throw new UserNotFoundException();
         }
     }
 }

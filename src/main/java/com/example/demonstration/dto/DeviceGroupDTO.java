@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,7 +16,5 @@ import java.util.List;
 public class DeviceGroupDTO {
     private String groupName;
     private String ownerName;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "groupId", referencedColumnName = "groupId")
     private List<Device> devices;
 }
