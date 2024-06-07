@@ -15,6 +15,6 @@ import java.util.List;
 
 public class DeviceGroupDTO {
     private String groupName;
-    private String ownerName;
+    private String admin;
     private List<Device> devices;
 }

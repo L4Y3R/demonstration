@@ -32,5 +32,10 @@ public class GlobalExceptionHandler {
         public ResponseEntity<Object> exception(UserExistsException exception) {
             return new ResponseEntity<>("This user already exists", HttpStatus.CONFLICT);
         }
+
+        @ExceptionHandler(UserHasDevicesException.class)
+        public ResponseEntity<Object> exception(UserHasDevicesException exception) {
+            return new ResponseEntity<>("This user has devices still", HttpStatus.CONFLICT);
+        }
 }
 

@@ -7,10 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +22,6 @@ public class DeviceGroup {
     @Id
     private String groupId;
     private String groupName;
-    private String ownerName;
-    private List<Device> devices = new ArrayList<>();
+    private String admin;
+    private List<String> devices = new ArrayList<>();
 }
