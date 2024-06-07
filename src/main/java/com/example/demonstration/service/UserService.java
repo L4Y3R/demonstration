@@ -2,6 +2,7 @@ package com.example.demonstration.service;
 
 import com.example.demonstration.dto.UserDTO;
 import com.example.demonstration.entity.User;
+import com.example.demonstration.exception.UserExistsException;
 import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.repository.UserRepo;
 import org.modelmapper.ModelMapper;
@@ -33,8 +34,13 @@ public class UserService {
     }
 
     public UserDTO createUser(UserDTO userDTO){
-        userRepo.save(modelMapper.map(userDTO, User.class));
-        return userDTO;
+        Optional<User> user = userRepo.findByUserName(userDTO.getUserName());
+        if(user.isEmpty()){
+            userRepo.save(modelMapper.map(userDTO, User.class));
+            return userDTO;
+        } else {
+            throw new UserExistsException();
+        }
     }
 
     public UserDTO updateUser(String id, UserDTO userDTO) {
