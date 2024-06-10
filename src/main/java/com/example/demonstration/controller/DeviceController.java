@@ -62,7 +62,7 @@ public class DeviceController {
         }
     }
 
-    //add a device(with a user)
+    //add a device with a user
     @PostMapping("/new")
     public ResponseEntity<Device> addDeviceToUser(@RequestBody Device device, @RequestParam String userName) {
         try {
