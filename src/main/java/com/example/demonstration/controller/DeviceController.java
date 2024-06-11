@@ -1,8 +1,11 @@
 package com.example.demonstration.controller;
 
 import com.example.demonstration.dto.DeviceDTO;
+import com.example.demonstration.entity.Device;
+import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,12 +33,7 @@ public class DeviceController {
         return deviceService.getDevice(id);
     }
 
-    //create a device
-    @PostMapping("/new")
-    public DeviceDTO createDevice(@RequestBody DeviceDTO deviceDTO){
-        return deviceService.createDevice(deviceDTO);
-    }
-
+    //update a device
     @PutMapping("/{id}")
     public ResponseEntity<DeviceDTO> updateDevice(@PathVariable String id, @RequestBody DeviceDTO deviceDTO) {
         DeviceDTO updatedDevice = deviceService.updateDevice(id, deviceDTO);
@@ -46,13 +44,32 @@ public class DeviceController {
         }
     }
 
+    //delete a device
     @DeleteMapping("/{id}")
     public ResponseEntity<DeviceDTO> deleteDevice(@PathVariable String id) {
         Optional<DeviceDTO> deletedDevice = deviceService.deleteDevice(id);
-        if (deletedDevice.isPresent()) {
-            return ResponseEntity.ok(deletedDevice.get());
+        return deletedDevice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    //add a device to a group
+    @PostMapping("/add")
+    public ResponseEntity<Device> addDevice(@RequestBody Device device, @RequestParam String groupName, @RequestParam String userName) {
+        Device savedDevice = deviceService.addDeviceToGroupWithUser(device, groupName, userName);
+        if (savedDevice != null) {
+            return ResponseEntity.ok(savedDevice);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    //add a device with a user
+    @PostMapping("/new")
+    public ResponseEntity<Device> addDeviceToUser(@RequestBody Device device, @RequestParam String userName) {
+        try {
+            Device savedDevice = deviceService.addDeviceToUser(device, userName);
+            return ResponseEntity.ok(savedDevice);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 }

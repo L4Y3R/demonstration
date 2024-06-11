@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/vi/users")
+@RequestMapping("api/v1/users")
 @CrossOrigin
 public class UserContoller {
 
@@ -29,12 +29,13 @@ public class UserContoller {
         return userService.getUser(id);
     }
 
-    //create a device
+    //create a user
     @PostMapping("/new")
     public UserDTO createUser(@RequestBody UserDTO userDTO){
         return userService.createUser(userDTO);
     }
 
+    //update a user
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO userDTO) {
         UserDTO updatedUser = userService.updateUser(id, userDTO);
@@ -45,13 +46,10 @@ public class UserContoller {
         }
     }
 
+    //delete a user
     @DeleteMapping("/{id}")
     public ResponseEntity<UserDTO> deleteUser(@PathVariable String id) {
         Optional<UserDTO> deletedUser = userService.deleteUser(id);
-        if (deletedUser.isPresent()) {
-            return ResponseEntity.ok(deletedUser.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return deletedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

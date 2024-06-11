@@ -21,6 +21,5 @@ public class Device {
     private String deviceName;
     private String deviceType;
     private Boolean status;
-    @javax.persistence.Id
-    private Long id;
+    private String userId;
 }

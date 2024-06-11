@@ -1,8 +1,12 @@
 package com.example.demonstration.service;
 
-
 import com.example.demonstration.dto.UserDTO;
+import com.example.demonstration.entity.Device;
 import com.example.demonstration.entity.User;
+import com.example.demonstration.exception.UserExistsException;
+import com.example.demonstration.exception.UserHasDevicesException;
+import com.example.demonstration.exception.UserNotFoundException;
+import com.example.demonstration.repository.DeviceRepo;
 import com.example.demonstration.repository.UserRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -18,52 +22,71 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private DeviceRepo deviceRepo;
+
     @Autowired
     private ModelMapper modelMapper;
 
+    //return the list of users to the controller
     public List<UserDTO> getAllUsers(){
         List<User> users = userRepo.findAll();
         return modelMapper.map(users, new TypeToken<List<UserDTO>>(){}.getType());
     }
 
+    //return a single user to the controller
     public UserDTO getUser(String id){
         Optional<User> userOptional = userRepo.findById(id);
-        if(userOptional.isPresent()){
-            return modelMapper.map(userOptional.get(), UserDTO.class);
-        }else {
-            return null;
-        }
+        if(userOptional.isEmpty()) throw new UserNotFoundException();
+        return userOptional.map(user -> modelMapper.map(user, UserDTO.class)).orElse(null);
     }
 
+    //create a user
     public UserDTO createUser(UserDTO userDTO){
-        userRepo.save(modelMapper.map(userDTO, User.class));
-        return userDTO;
-    }
-
-    public UserDTO updateUser(String id, UserDTO userDTO){
-        Optional<User> existingUserOptional = userRepo.findById(id);
-        if(existingUserOptional.isPresent()){
-            User user = existingUserOptional.get();
-            modelMapper.map(userDTO, user);
-            user.setUserId(id);
-            userRepo.save(user);
+        //retrieve any user with the same username
+        Optional<User> user = userRepo.findByUserName(userDTO.getUserName());
+        if(user.isEmpty()){
+            userRepo.save(modelMapper.map(userDTO, User.class)); //save the user
             return userDTO;
-        }else {
-            return null;
+        } else {
+            //user already exists
+            throw new UserExistsException();
         }
     }
 
-    public Optional<UserDTO> deleteUser(String id) {
+    //update the user
+    public UserDTO updateUser(String id, UserDTO userDTO) {
+        //get the user document that needs updating
         Optional<User> existingUserOptional = userRepo.findById(id);
         if (existingUserOptional.isPresent()) {
-            userRepo.deleteById(id);
-            UserDTO deletedUserDTO = new UserDTO();
-            deletedUserDTO.setUserName(existingUserOptional.get().getUserName());
-            return Optional.of(deletedUserDTO);
+            User user = existingUserOptional.get(); //retrieve the user from the optional
+            modelMapper.map(userDTO, user);
+            userRepo.save(user);
+            return userDTO;
         } else {
-            return Optional.empty();
+            //no such user
+            throw new UserNotFoundException();
         }
     }
 
+    //delete a user
+    public Optional<UserDTO> deleteUser(String id) {
+        //get the user document to be deleted
+        Optional<User> existingUserOptional = userRepo.findById(id);
 
+        if (existingUserOptional.isPresent()) {
+            List<Device> userDevices = deviceRepo.findByUserId(id); //get the list of devices associated with the user
+            if (!userDevices.isEmpty()) {
+                throw new UserHasDevicesException(); //user has devices and cannot be deleted
+            }
+            //if there are no associated devices
+            userRepo.deleteById(id);
+            UserDTO deletedUserDTO = modelMapper.map(existingUserOptional.get(), UserDTO.class);
+            return Optional.of(deletedUserDTO);
+        } else {
+            //no such user
+            throw new UserNotFoundException();
+        }
+    }
 }

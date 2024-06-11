@@ -1,7 +1,11 @@
 package com.example.demonstration.repository;
 
-import com.example.demonstration.entity.DeviceGroupRepo;
+import com.example.demonstration.entity.DeviceGroup;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface DeviceGroupRepo extends MongoRepository<DeviceGroup,String> {
+import java.util.Optional;
+
+public interface DeviceGroupRepo extends MongoRepository<DeviceGroup, String> {
+    //custom query to return a device group by group name
+    Optional<DeviceGroup> findByGroupName(String groupName);
 }
