@@ -1,4 +1,5 @@
 package com.example.demonstration.entity;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +14,11 @@ import javax.persistence.Entity;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection="device")
-public class Device {
+@Document(collection="user")
+
+public class User {
 
     @Id
-    private String deviceId;
-    private String deviceName;
-    private String deviceType;
-    private Boolean status;
     private String userId;
+    private String userName;
 }
