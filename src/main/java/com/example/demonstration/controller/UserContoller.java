@@ -3,8 +3,10 @@ package com.example.demonstration.controller;
 import com.example.demonstration.dto.UserDTO;
 import com.example.demonstration.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +28,12 @@ public class UserContoller {
     //get one user
     @GetMapping("/{id}")
     public UserDTO getUser(@PathVariable("id") String id) {
-        return userService.getUser(id);
+        try{
+          UserDTO user = userService.getUser(id);
+          return ResponseEntity.ok(user).getBody();
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal error occurred", e);
+        }
     }
 
     //create a user

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,12 @@ public class DeviceController {
     //get one device
     @GetMapping("/{id}")
     public DeviceDTO getDevice(@PathVariable("id") String id) {
-        return deviceService.getDevice(id);
+        try{
+            DeviceDTO device =  deviceService.getDevice(id);
+            return ResponseEntity.ok(device).getBody();
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal error occurred", e);
+        }
     }
 
     //update a device
