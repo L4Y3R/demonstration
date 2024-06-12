@@ -47,6 +47,21 @@ public class DeviceService {
         return deviceOptional.map(device -> modelMapper.map(device, DeviceDTO.class)).orElse(null);
     }
 
+    //return a single device to the commands
+    public DeviceDTO getDeviceForCommand(String deviceId, String userId){
+        Optional<Device> deviceOptional = deviceRepo.findById(deviceId);
+        if (deviceOptional.isPresent()) {
+            Device device = deviceOptional.get();
+            if (device.getUserId().equals(userId)) {
+                return modelMapper.map(device, DeviceDTO.class);
+            } else {
+                throw new UserNotFoundException();
+            }
+        } else {
+            throw new DeviceNotFoundException();
+        }
+    }
+
     //update a document
     public DeviceDTO updateDevice(String id, DeviceDTO deviceDTO) {
         //looks for the device with the id to update

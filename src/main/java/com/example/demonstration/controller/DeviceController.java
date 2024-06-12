@@ -2,6 +2,7 @@ package com.example.demonstration.controller;
 
 import com.example.demonstration.dto.DeviceDTO;
 import com.example.demonstration.entity.Device;
+import com.example.demonstration.exception.DeviceNotFoundException;
 import com.example.demonstration.exception.UserNotFoundException;
 import com.example.demonstration.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,24 @@ public class DeviceController {
             return ResponseEntity.ok(device).getBody();
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal error occurred", e);
+        }
+    }
+
+    @GetMapping("conf/")
+    public DeviceDTO getDeviceForCommand(@RequestParam("deviceId") String deviceId, @RequestParam("userId") String userId) {
+        try {
+            DeviceDTO device = deviceService.getDeviceForCommand(deviceId, userId);
+
+            if (device == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Device not found or not associated with the user");
+            }
+            return device;
+        } catch (DeviceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Device not found", e);
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", e);
         }
     }
 
