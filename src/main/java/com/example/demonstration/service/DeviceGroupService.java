@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class DeviceGroupService {
     @Autowired
     private DeviceGroupRepo deviceGroupRepo;
@@ -36,6 +35,7 @@ public class DeviceGroupService {
     }
 
     //create a new document
+    @Transactional
     public DeviceGroupDTO createDeviceGroup (DeviceGroupDTO deviceGroupDTO){
         //looks for the groups that has the same name in the database
         Optional<DeviceGroup> group = deviceGroupRepo.findByGroupName(deviceGroupDTO.getGroupName());
@@ -50,6 +50,7 @@ public class DeviceGroupService {
     }
 
     //update the document
+    @Transactional
     public DeviceGroupDTO updateDeviceGroup(String id, DeviceGroupDTO deviceGroupDTO) {
         //finds the device group from the database with the given id
         Optional<DeviceGroup> existingDeviceGroupOptional = deviceGroupRepo.findById(id);
@@ -66,6 +67,7 @@ public class DeviceGroupService {
     }
 
     //delete a device group
+    @Transactional
     public Optional<DeviceGroupDTO> deleteDeviceGroup(String id) {
         //finds the device group from the database with the given id
         Optional<DeviceGroup> existingDeviceGroupOptional = deviceGroupRepo.findById(id);

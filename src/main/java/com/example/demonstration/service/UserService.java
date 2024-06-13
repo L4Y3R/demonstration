@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class UserService {
     @Autowired
     private UserRepo userRepo;
@@ -43,6 +42,7 @@ public class UserService {
     }
 
     //create a user
+    @Transactional
     public UserDTO createUser(UserDTO userDTO){
         //retrieve any user with the same username
         Optional<User> user = userRepo.findByUserName(userDTO.getUserName());
@@ -56,6 +56,7 @@ public class UserService {
     }
 
     //update the user
+    @Transactional
     public UserDTO updateUser(String id, UserDTO userDTO) {
         //get the user document that needs updating
         Optional<User> existingUserOptional = userRepo.findById(id);
@@ -71,6 +72,7 @@ public class UserService {
     }
 
     //delete a user
+    @Transactional
     public Optional<UserDTO> deleteUser(String id) {
         //get the user document to be deleted
         Optional<User> existingUserOptional = userRepo.findById(id);
