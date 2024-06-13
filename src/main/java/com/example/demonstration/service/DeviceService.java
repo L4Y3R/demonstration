@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class DeviceService {
     @Autowired
     private DeviceRepo deviceRepo;
@@ -63,6 +62,7 @@ public class DeviceService {
     }
 
     //update a document
+    @Transactional
     public DeviceDTO updateDevice(String id, DeviceDTO deviceDTO) {
         //looks for the device with the id to update
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
@@ -80,6 +80,7 @@ public class DeviceService {
     }
 
     //delete a document
+    @Transactional
     public Optional<DeviceDTO> deleteDevice(String id) {
         //looks for the device with the id to delete
         Optional<Device> existingDeviceOptional = deviceRepo.findById(id);
@@ -104,6 +105,7 @@ public class DeviceService {
     }
 
     //add a device to a group
+    @Transactional
     public Device addDeviceToGroupWithUser(Device device, String groupName, String userName) {
         //find the group with the given name
         Optional<DeviceGroup> optionalGroup = deviceGroupRepo.findByGroupName(groupName);
@@ -128,6 +130,7 @@ public class DeviceService {
     }
 
     //add a device
+    @Transactional
     public Device addDeviceToUser(Device device, String userName) {
         //find the user with the given username
         Optional<User> optionalUser = userRepo.findByUserName(userName);
