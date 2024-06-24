@@ -43,7 +43,7 @@ public class DeviceService {
     public List<DeviceDTO> getAllDevices(){
         try{
             List<Device> devices = deviceRepo.findAll();
-            logger.info("Devices Received");
+            logger.info("All Devices Received");
             return modelMapper.map(devices, new TypeToken<List<DeviceDTO>>(){}.getType());
         }catch(Exception e){
             logger.error("Devices Could Not Be Received");
@@ -56,10 +56,10 @@ public class DeviceService {
         try{
             Optional<Device> deviceOptional = deviceRepo.findById(id);
             if (deviceOptional.isEmpty()){
-                logger.error("Entered Device Does Not Exist");
+                logger.error("Device with ID {} Does Not Exist", id);
                 throw new DeviceNotFoundException();
             }else{
-                logger.info("Device Received");
+                logger.info("Device with Requested ID{} Received", id);
                 return deviceOptional.map(device -> modelMapper.map(device, DeviceDTO.class)).orElse(null);
             }
         }catch(Exception e){
@@ -118,7 +118,7 @@ public class DeviceService {
             logger.info("Device Found with the Given ID");
             //delete the device
             deviceRepo.deleteById(id);
-            logger.info("Device Deleted");
+            logger.info("Device Deleted with ID {}", id);
             DeviceDTO deletedDeviceDTO = modelMapper.map(existingDeviceOptional.get(), DeviceDTO.class); //retrieves the deleted document from device optional
             //retrieves all the device groups
             List<DeviceGroup> groupsToUpdate = deviceGroupRepo.findAll();
@@ -128,7 +128,7 @@ public class DeviceService {
                     group.getDevices().remove(id);
                     deviceGroupRepo.save(group);
                 }
-                logger.info("Respective in Device Group Deleted");
+                logger.info("Respective Devices in Device Group Deleted");
             }
             return Optional.of(deletedDeviceDTO);
         } else {
@@ -154,15 +154,15 @@ public class DeviceService {
             logger.info("Saved Device to Group");
             optionalGroup.get().getDevices().add(device.getDeviceId()); //add the new device to the device list of the group entered by the user
             deviceGroupRepo.save(optionalGroup.get());//save the group
-            logger.info("Saved the Group");
+            logger.info("Saved the Group {}", groupName);
             return device;
         } else {
             //if the group or user does not exist
             if(optionalUser.isEmpty()){
-                logger.error("User Does not Exist");
+                logger.error("User {} Does not Exist",userName);
                 throw new UserNotFoundException();
             } else {
-                logger.error("Group Does not Exist");
+                logger.error("Group {} Does not Exist",groupName);
                 throw new GroupNotFoundException();
             }
         }
@@ -174,12 +174,12 @@ public class DeviceService {
         //find the user with the given username
         Optional<User> optionalUser = userRepo.findByUserName(userName);
         if (optionalUser.isPresent()) {
-            logger.info("User Does Exists");
             device.setUserId(optionalUser.get().getUserId()); //set user id of the device collection to the id of the entered user
+            logger.error("Added Device to User{}", userName);
             return deviceRepo.save(device); //save the device
         } else {
             //no such user
-            logger.error("User Does not Exist");
+            logger.error("User{} Does not Exist",userName);
             throw new UserNotFoundException();
         }
     }
