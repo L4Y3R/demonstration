@@ -10,6 +10,8 @@ import com.example.demonstration.repository.DeviceRepo;
 import com.example.demonstration.repository.UserRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +30,12 @@ public class UserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     //return the list of users to the controller
     public List<UserDTO> getAllUsers(){
         List<User> users = userRepo.findAll();
+        logger.info("Users Received");
         return modelMapper.map(users, new TypeToken<List<UserDTO>>(){}.getType());
     }
 
@@ -38,6 +43,7 @@ public class UserService {
     public UserDTO getUser(String id){
         Optional<User> userOptional = userRepo.findById(id);
         if(userOptional.isEmpty()) throw new UserNotFoundException();
+        logger.info("User with ID{} Received", id);
         return userOptional.map(user -> modelMapper.map(user, UserDTO.class)).orElse(null);
     }
 
@@ -47,10 +53,12 @@ public class UserService {
         //retrieve any user with the same username
         Optional<User> user = userRepo.findByUserName(userDTO.getUserName());
         if(user.isEmpty()){
+            logger.info("User Created Successfully");
             userRepo.save(modelMapper.map(userDTO, User.class)); //save the user
             return userDTO;
         } else {
             //user already exists
+            logger.error("User Already Exists");
             throw new UserExistsException();
         }
     }
@@ -64,9 +72,11 @@ public class UserService {
             User user = existingUserOptional.get(); //retrieve the user from the optional
             modelMapper.map(userDTO, user);
             userRepo.save(user);
+            logger.info("User Updated");
             return userDTO;
         } else {
             //no such user
+            logger.error("User Not Found");
             throw new UserNotFoundException();
         }
     }
@@ -80,14 +90,17 @@ public class UserService {
         if (existingUserOptional.isPresent()) {
             List<Device> userDevices = deviceRepo.findByUserId(id); //get the list of devices associated with the user
             if (!userDevices.isEmpty()) {
+                logger.error("User Has Devices, Therefore Cannot be Deleted");
                 throw new UserHasDevicesException(); //user has devices and cannot be deleted
             }
             //if there are no associated devices
             userRepo.deleteById(id);
+            logger.info("User with ID {} Deleted",id);
             UserDTO deletedUserDTO = modelMapper.map(existingUserOptional.get(), UserDTO.class);
             return Optional.of(deletedUserDTO);
         } else {
             //no such user
+            logger.error("User with ID {} Not Found",id);
             throw new UserNotFoundException();
         }
     }
