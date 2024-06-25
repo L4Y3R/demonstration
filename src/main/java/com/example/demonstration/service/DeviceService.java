@@ -46,7 +46,7 @@ public class DeviceService {
             logger.info("All Devices Received");
             return modelMapper.map(devices, new TypeToken<List<DeviceDTO>>(){}.getType());
         }catch(Exception e){
-            logger.error("Devices Could Not Be Received");
+            logger.error("Devices Could Not Be Received", e);
             throw new DeviceNotFoundException();
         }
     }
@@ -63,7 +63,7 @@ public class DeviceService {
                 return deviceOptional.map(device -> modelMapper.map(device, DeviceDTO.class)).orElse(null);
             }
         }catch(Exception e){
-            logger.error("Device Could Not Be Received");
+            logger.error("Device Could Not Be Received", e);
             throw new DeviceNotFoundException();
         }
     }
